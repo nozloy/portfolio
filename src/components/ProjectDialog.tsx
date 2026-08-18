@@ -11,6 +11,7 @@ export function ProjectDialog({ project, children }: Props) {
   const [imageIndex, setImageIndex] = useState(0)
   const current = project.images[imageIndex]
   const move = (step: number) => setImageIndex((index) => (index + step + project.images.length) % project.images.length)
+  const paragraphs = project.details.split(/\n\s*\n/).filter(Boolean)
 
   return (
     <Dialog.Root open={open} onOpenChange={setOpen}>
@@ -29,7 +30,9 @@ export function ProjectDialog({ project, children }: Props) {
             <section className="dialog-copy">
               <div className="project-kicker"><span>{project.number}</span>{project.type}</div>
               <h2>{project.title}</h2>
-              <p>{project.details}</p>
+              <div className="project-details">
+                {paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
+              </div>
               <div className="feature-list">{project.features.map((feature) => <span key={feature}>+ {feature}</span>)}</div>
               <div className="stack-list">{project.stack.map((item) => <code key={item}>{item}</code>)}</div>
               {(project.url || project.github) && (
