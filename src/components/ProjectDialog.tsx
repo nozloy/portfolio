@@ -1,20 +1,51 @@
-import { useState, type ReactNode } from 'react'
+import { useRef, useState, type ReactNode } from 'react'
 import { Dialog } from 'radix-ui'
 import { AnimatePresence, motion } from 'motion/react'
 import { ArrowUpRight, ChevronLeft, ChevronRight, X } from 'lucide-react'
 import type { Project } from '../data/projects'
 
 type Props = { project: Project; children: ReactNode }
+type TouchPoint = { x: number; y: number }
+
+const SWIPE_THRESHOLD = 48
 
 export function ProjectDialog({ project, children }: Props) {
   const [open, setOpen] = useState(false)
   const [imageIndex, setImageIndex] = useState(0)
+  const touchStart = useRef<TouchPoint | null>(null)
   const current = project.images[imageIndex]
   const move = (step: number) => setImageIndex((index) => (index + step + project.images.length) % project.images.length)
   const paragraphs = project.details.split(/\n\s*\n/).filter(Boolean)
 
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen)
+    if (!nextOpen) {
+      setImageIndex(0)
+      touchStart.current = null
+    }
+  }
+
+  const handleTouchStart = (event: React.TouchEvent<HTMLElement>) => {
+    if (project.images.length < 2) return
+    const touch = event.touches[0]
+    touchStart.current = { x: touch.clientX, y: touch.clientY }
+  }
+
+  const handleTouchEnd = (event: React.TouchEvent<HTMLElement>) => {
+    const start = touchStart.current
+    touchStart.current = null
+    if (!start || project.images.length < 2) return
+
+    const touch = event.changedTouches[0]
+    const deltaX = touch.clientX - start.x
+    const deltaY = touch.clientY - start.y
+
+    if (Math.abs(deltaX) < SWIPE_THRESHOLD || Math.abs(deltaX) <= Math.abs(deltaY)) return
+    move(deltaX < 0 ? 1 : -1)
+  }
+
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
+    <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="dialog-overlay" />
@@ -40,9 +71,23 @@ export function ProjectDialog({ project, children }: Props) {
               )}
             </section>
             <section className="dialog-gallery">
-              <div className="gallery-frame">
+              <div
+                className="gallery-frame"
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+                onTouchCancel={() => { touchStart.current = null }}
+              >
                 <AnimatePresence mode="wait" initial={false}>
-                  <motion.img key={current.src} src={current.src} alt={current.alt} initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -18 }} transition={{ duration: 0.2 }} />
+                  <motion.img
+                    key={current.src}
+                    src={current.src}
+                    alt={current.alt}
+                    draggable={false}
+                    initial={{ opacity: 0, x: 18 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -18 }}
+                    transition={{ duration: 0.2 }}
+                  />
                 </AnimatePresence>
               </div>
               {project.images.length > 1 && (
