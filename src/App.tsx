@@ -145,9 +145,14 @@ function Contact() {
           <div className="prompt-line"><span>$</span> ./start-project</div>
           <h2>Есть задача?<br />Обсудим решение.</h2>
           <p>Сайты, внутренние сервисы, боты, интеграции и автоматизация.</p>
-          <a className="button-primary" href="https://github.com/nozloy" target="_blank" rel="noreferrer">
-            связаться через GitHub <ArrowUpRight size={16} />
-          </a>
+          <div className="hero-actions">
+            <a className="button-primary" href="https://t.me/nozloy" target="_blank" rel="noreferrer">
+              связаться по Telegram <ArrowUpRight size={16} />
+            </a>
+            <a className="button-ghost" href="https://max.ru/u/f9LHodD0cOLKxanC14xetvwGk-FxNObFBQldRufCrAo2qiNpqyUhLnM_YW4" target="_blank" rel="noreferrer">
+              связаться в MAX <ArrowUpRight size={16} />
+            </a>
+          </div>
         </div>
       </div>
     </section>
