@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowUpRight, Github, Terminal } from 'lucide-react'
+import { ArrowDown, ArrowUpRight, Code2, Terminal } from 'lucide-react'
 import { motion, useReducedMotion } from 'motion/react'
 import { projects } from './data/projects'
 import { SpotlightCard } from './components/SpotlightCard'
@@ -35,7 +35,7 @@ function Hero() {
           </p>
           <div className="hero-actions">
             <a className="button-primary" href="#work">projects <ArrowDown size={16} /></a>
-            <a className="button-ghost" href="https://github.com/nozloy" target="_blank" rel="noreferrer"><Github size={16} /> github</a>
+            <a className="button-ghost" href="https://github.com/nozloy" target="_blank" rel="noreferrer"><Code2 size={16} /> github</a>
           </div>
         </div>
         <aside className="hero-terminal" aria-label="Краткая информация">
